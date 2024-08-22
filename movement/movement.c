@@ -105,6 +105,7 @@ watch_date_time scheduled_tasks[MOVEMENT_NUM_FACES];
 const int32_t movement_le_inactivity_deadlines[8] = {INT_MAX, 600, 3600, 7200, 21600, 43200, 86400, 604800};
 const int16_t movement_timeout_inactivity_deadlines[4] = {60, 120, 300, 1800};
 movement_event_t event;
+wake_time_t wake_time;
 
 const int16_t movement_timezone_offsets[] = {
     0,      //  0 :   0:00:00 (UTC)
@@ -698,4 +699,13 @@ void cb_tick(void) {
     } else {
         movement_state.subsecond++;
     }
+}
+
+void set_wake_time(uint32_t hour, uint32_t minute) {
+    wake_time.hour = hour;
+    wake_time.minute = minute;
+}
+
+wake_time_t get_wake_time() {
+    return wake_time;
 }

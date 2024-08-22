@@ -66,6 +66,25 @@ void simple_clock_face_activate(movement_settings_t *settings, void *context) {
     state->previous_date_time = 0xFFFFFFFF;
 }
 
+bool is_quiet_time(watch_date_time now, bool alarm_enabled) {
+    if (now.unit.hour >= 23) {
+        return true;
+    }
+
+    if(alarm_enabled) {
+        wake_time_t wake_time = get_wake_time();
+
+        bool before_wake_time = (now.unit.hour < wake_time.hour) ||
+            (now.unit.hour == wake_time.hour && now.unit.minute < wake_time.minute);
+
+        if (before_wake_time) return true;
+    } else {
+        if (now.unit.hour < 8) return true;
+    }
+
+    return false;
+}
+
 bool simple_clock_face_loop(movement_event_t event, movement_settings_t *settings, void *context) {
     simple_clock_state_t *state = (simple_clock_state_t *)context;
     char buf[11];
@@ -154,6 +173,9 @@ bool simple_clock_face_wants_background_task(movement_settings_t *settings, void
     (void) settings;
     simple_clock_state_t *state = (simple_clock_state_t *)context;
     if (!state->signal_enabled) return false;
+    if ((settings->bit.quiet_time_enabled && is_quiet_time(watch_rtc_get_date_time(), settings->bit.alarm_enabled))) {
+        return false;
+    }
 
     watch_date_time date_time = watch_rtc_get_date_time();
 

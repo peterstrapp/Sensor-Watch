@@ -80,6 +80,8 @@ void wake_face_activate(movement_settings_t *settings, void *context) {
     (void) context;
 }
 void wake_face_resign(movement_settings_t *settings, void *context) {
+    wake_face_state_t *state = (wake_face_state_t *)context;
+    set_wake_time(state->hour, state->minute);
     (void) settings;
     (void) context;
 }

@@ -47,6 +47,7 @@
 typedef union {
     struct {
         bool button_should_sound : 1;       // if true, pressing a button emits a sound.
+        bool quiet_time_enabled : 1;
         uint8_t to_interval : 2;            // an inactivity interval for asking the active face to resign.
         bool to_always : 1;                 // if true, always time out from the active face to face 0. otherwise only faces that time out will resign (the default).
         uint8_t le_interval : 3;            // 0 to disable low energy mode, or an inactivity interval for going into low energy mode.
@@ -126,6 +127,11 @@ typedef struct {
     uint8_t event_type;
     uint8_t subsecond;
 } movement_event_t;
+
+typedef struct {
+    uint32_t hour : 5;
+    uint32_t minute : 6;
+} wake_time_t;
 
 extern const int16_t movement_timezone_offsets[];
 extern const char movement_valid_position_0_chars[];
@@ -309,6 +315,9 @@ void movement_request_wake(void);
 void movement_play_signal(void);
 void movement_play_alarm(void);
 void movement_play_alarm_beeps(uint8_t rounds, BuzzerNote alarm_note);
+
+void set_wake_time(uint32_t hour, uint32_t minute);
+wake_time_t get_wake_time(void);
 
 uint8_t movement_claim_backup_register(void);
 
